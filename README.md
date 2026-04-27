@@ -1,5 +1,7 @@
 # Rubby Design System
 
+**English** · [Русский](README.ru.md)
+
 > Apple-inspired UI kit for Ruby on Rails apps. Built on Bootstrap 5.3 + custom SCSS, faithful to Apple HIG (iOS 17 / macOS Sequoia): SF Pro typography, system color palette, vibrancy, soft layered shadows, continuous corners, spring transitions.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-007AFF.svg?style=flat-square)](LICENSE)
