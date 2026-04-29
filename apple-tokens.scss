@@ -80,9 +80,9 @@
   --ds-space-16: 64px;
 
   // ── Typography ────────────────────────────────────────────────────────────
-  --ds-font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-                  "Inter", "Helvetica Neue", "Segoe UI", Arial, sans-serif;
-  --ds-font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --ds-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                  "Helvetica Neue", "Segoe UI", Arial, sans-serif;
+  --ds-font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --ds-font-rounded: -apple-system-rounded, "SF Pro Rounded", "Inter", system-ui, sans-serif;
 
   // ── Motion ────────────────────────────────────────────────────────────────
@@ -124,25 +124,30 @@
   --ds-orange-tint: rgba(255, 159, 10, 0.18);
   --ds-purple-tint: rgba(191, 90, 242, 0.18);
 
-  --ds-bg-base:        #000000;
-  --ds-bg-elevated:    #1C1C1E;
-  --ds-bg-grouped:     #1C1C1E;
-  --ds-bg-overlay:     rgba(28, 28, 30, 0.72);
+  // Three-tier dark surfaces (Linear / Vercel / Notion approach):
+  // base       — глубокий фон страницы
+  // grouped    — sidebar, header, нейтральные подложки
+  // elevated   — карточки, модалки, popover (выделяются на фоне)
+  --ds-bg-base:        #0A0A0B;
+  --ds-bg-grouped:     #131316;
+  --ds-bg-elevated:    #1B1B20;
+  --ds-bg-overlay:     rgba(20, 20, 23, 0.78);
 
-  --ds-label-primary:    rgba(255, 255, 255, 0.92);
+  --ds-label-primary:    rgba(255, 255, 255, 0.95);
   --ds-label-secondary:  rgba(235, 235, 245, 0.62);
-  --ds-label-tertiary:   rgba(235, 235, 245, 0.40);
-  --ds-label-quaternary: rgba(235, 235, 245, 0.18);
+  --ds-label-tertiary:   rgba(235, 235, 245, 0.42);
+  --ds-label-quaternary: rgba(235, 235, 245, 0.20);
   --ds-label-on-accent:  #FFFFFF;
 
-  --ds-separator:        rgba(84, 84, 88, 0.65);
-  --ds-separator-opaque: #38383A;
-  --ds-border-input:     rgba(120, 120, 128, 0.35);
+  // Тонкие разделители — менее назойливые, чем стандартные iOS
+  --ds-separator:        rgba(255, 255, 255, 0.07);
+  --ds-separator-opaque: #2A2A2F;
+  --ds-border-input:     rgba(255, 255, 255, 0.10);
 
-  --ds-fill-1: rgba(120, 120, 128, 0.36);
-  --ds-fill-2: rgba(120, 120, 128, 0.32);
-  --ds-fill-3: rgba(118, 118, 128, 0.24);
-  --ds-fill-4: rgba(118, 118, 128, 0.18);
+  --ds-fill-1: rgba(255, 255, 255, 0.14);
+  --ds-fill-2: rgba(255, 255, 255, 0.10);
+  --ds-fill-3: rgba(255, 255, 255, 0.07);
+  --ds-fill-4: rgba(255, 255, 255, 0.04);
 
   --ds-shadow-xs:  0 1px 2px rgba(0, 0, 0, 0.40);
   --ds-shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.40), 0 2px 6px rgba(0, 0, 0, 0.45);
