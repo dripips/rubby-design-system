@@ -5825,10 +5825,13 @@ body.modal-open {
   border-radius: 999px;
   font-size: 12px; font-weight: 600;
   background: var(--ds-fill-3); color: var(--ds-label-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
 
   &::before {
     content: ""; width: 6px; height: 6px; border-radius: 50%;
     background: currentColor;
+    flex-shrink: 0;
   }
 
   &--draft     { background: var(--ds-fill-3);   color: var(--ds-label-tertiary); }
