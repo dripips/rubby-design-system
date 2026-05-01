@@ -6058,9 +6058,12 @@ body.modal-open {
 }
 
 .dashboard-widget {
+  position: relative;  // для абсолютного overlay
   min-width: 0;        // фикс для overflow: ellipsis в детях
   display: flex;
   flex-direction: column;
+  transition: transform var(--ds-dur-base) var(--ds-ease-spring),
+              opacity   var(--ds-dur-base) var(--ds-ease-standard);
 
   &--s { grid-column: span 1; }
   &--m { grid-column: span 2; }
@@ -6089,6 +6092,183 @@ body.modal-open {
   .dashboard-widget--s,
   .dashboard-widget--m,
   .dashboard-widget--l { grid-column: 1 !important; }
+}
+
+// ── Edit mode: iOS Springboard-style ────────────────────────────────────
+// По умолчанию edit-overlay скрыт. .is-edit-mode на гриде — включает overlay,
+// курсор grab, лёгкий wiggle на виджетах.
+.dashboard-widget__edit-overlay {
+  display: none;
+}
+.dashboard-widget.is-hidden > :not(.dashboard-widget__edit-overlay) {
+  opacity: 0.35;
+}
+.dashboard-widget.is-hidden::after {
+  content: "";
+  position: absolute; inset: 0;
+  border: 2px dashed var(--ds-separator);
+  border-radius: var(--ds-radius-lg, 14px);
+  pointer-events: none;
+}
+
+.dashboard-grid.is-edit-mode {
+  .dashboard-widget {
+    cursor: grab;
+    animation: dashboard-wiggle 1.6s ease-in-out infinite;
+    transform-origin: center;
+
+    // Чтобы не все виджеты wiggle-ли в одну фазу — лёгкий "стохастический" сдвиг
+    &:nth-child(odd)        { animation-delay: -0.3s; }
+    &:nth-child(3n)         { animation-delay: -0.6s; }
+    &:nth-child(4n)         { animation-delay: -0.9s; }
+
+    &.is-dragging {
+      animation: none;
+      opacity: 0.45;
+      cursor: grabbing;
+      transform: scale(0.98);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    }
+
+    &:active:not(.is-dragging) {
+      animation: none;
+      transform: scale(0.98);
+    }
+  }
+
+  // Внутренние партиалы (section/card) не должны перехватывать клики на overlay
+  .dashboard-widget > section,
+  .dashboard-widget > .card-apple {
+    pointer-events: none;
+  }
+  // Но свои клики разрешим на overlay'е
+  .dashboard-widget__edit-overlay { pointer-events: auto; }
+
+  .dashboard-widget__edit-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    position: absolute;
+    top: 8px; left: 8px; right: 8px;
+    z-index: 4;
+    animation: dashboard-overlay-fade var(--ds-dur-base) var(--ds-ease-standard);
+  }
+}
+
+.dashboard-widget__visibility {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ds-bg-elevated);
+  color: var(--ds-label-secondary);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  cursor: pointer;
+  font-size: 14px; line-height: 1;
+  transition: background var(--ds-dur-fast) var(--ds-ease-standard),
+              color      var(--ds-dur-fast) var(--ds-ease-standard);
+
+  &:hover { background: var(--ds-fill-2); color: var(--ds-label-primary); }
+  &[aria-pressed="true"] {
+    background: var(--ds-fill-3);
+    color: var(--ds-label-tertiary);
+  }
+}
+.dashboard-widget__eye { font-size: 10px; line-height: 1; }
+
+// Floating-вариант size-segment поверх виджета
+.size-segment--floating {
+  background: var(--ds-bg-elevated);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+  padding: 2px;
+}
+.size-segment--floating .size-segment__pip {
+  padding: 4px 8px;
+  font-size: 10px;
+}
+.size-segment--floating .size-segment__label {
+  font-size: 10px;
+}
+
+// Sticky edit-bar внизу страницы
+.dashboard-edit-bar {
+  position: sticky;
+  bottom: 16px;
+  z-index: 50;
+  margin-top: var(--ds-space-3, 12px);
+  pointer-events: none;
+
+  &__inner {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 16px;
+    background: var(--ds-bg-elevated);
+    border: 1px solid var(--ds-separator);
+    border-radius: var(--ds-radius-pill);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+    backdrop-filter: saturate(180%) blur(20px);
+    animation: dashboard-edit-bar-rise var(--ds-dur-base) var(--ds-ease-spring);
+  }
+
+  &__hint {
+    font-size: 12px;
+    color: var(--ds-label-secondary);
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: inline-flex; gap: 8px;
+    flex: 0 0 auto;
+  }
+}
+
+@keyframes dashboard-wiggle {
+  0%, 100% { transform: rotate(-0.4deg) translateY(0);   }
+  50%      { transform: rotate( 0.4deg) translateY(-1px); }
+}
+
+@keyframes dashboard-overlay-fade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+@keyframes dashboard-edit-bar-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+// ── Toast (компактный, появляется снизу) ────────────────────────────────
+.toast-apple {
+  position: fixed;
+  z-index: 1080;
+  padding: 10px 18px;
+  border-radius: var(--ds-radius-pill);
+  background: var(--ds-bg-elevated);
+  color: var(--ds-label-primary);
+  font-size: 13px; font-weight: 500;
+  border: 1px solid var(--ds-separator);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity var(--ds-dur-base) var(--ds-ease-standard),
+              transform var(--ds-dur-base) var(--ds-ease-spring);
+
+  &--bottom {
+    bottom: 24px; left: 50%;
+    transform: translate(-50%, 8px);
+  }
+
+  &.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
 }
 
 // ── Dashboard customize: drag-and-drop + size picker ─────────────────────
