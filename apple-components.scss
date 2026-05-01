@@ -6045,6 +6045,30 @@ body.modal-open {
   border: 0;
 }
 
+// ── Dashboard customize: drag-and-drop виджетов ──────────────────────────
+.dashboard-widget-row {
+  cursor: grab;
+  transition: background var(--ds-dur-fast) var(--ds-ease-standard);
+  &.is-dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+    background: var(--ds-fill-3);
+  }
+  &:hover .dashboard-widget-row__handle {
+    color: var(--ds-label-primary);
+  }
+}
+.dashboard-widget-row__handle {
+  display: inline-block;
+  width: 24px;
+  text-align: center;
+  color: var(--ds-label-tertiary);
+  font-size: 18px;
+  line-height: 1;
+  user-select: none;
+  cursor: grab;
+}
+
 // ── Bootstrap-чат: пузырьки HR/AI ─────────────────────────────────────────
 .bootstrap-chat {
   display: flex;
