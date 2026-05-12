@@ -6062,8 +6062,6 @@ body.modal-open {
   min-width: 0;        // фикс для overflow: ellipsis в детях
   display: flex;
   flex-direction: column;
-  transition: transform var(--ds-dur-base) var(--ds-ease-spring),
-              opacity   var(--ds-dur-base) var(--ds-ease-standard);
 
   &--s { grid-column: span 1; }
   &--m { grid-column: span 2; }
@@ -6111,38 +6109,34 @@ body.modal-open {
   pointer-events: none;
 }
 
+// Edit-mode: минимум стилей, никаких animations/transitions, чтобы native HTML5
+// drag работал предсказуемо. Visual cue — статичный inset-outline + цветовой
+// shift при drop-target hover.
 .dashboard-grid.is-edit-mode {
   .dashboard-widget {
     cursor: grab;
-    animation: dashboard-wiggle 1.6s ease-in-out infinite;
-    transform-origin: center;
-
-    // Чтобы не все виджеты wiggle-ли в одну фазу — лёгкий "стохастический" сдвиг
-    &:nth-child(odd)        { animation-delay: -0.3s; }
-    &:nth-child(3n)         { animation-delay: -0.6s; }
-    &:nth-child(4n)         { animation-delay: -0.9s; }
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow: 0 0 0 2px var(--ds-blue-tint, rgba(10,132,255,0.22)) inset;
+    border-radius: var(--ds-radius-lg, 14px);
 
     &.is-dragging {
-      animation: none;
-      opacity: 0.45;
+      opacity: 0.35;
       cursor: grabbing;
-      transform: scale(0.98);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+      box-shadow: 0 0 0 2px var(--ds-blue, #0A84FF) inset;
     }
 
-    &:active:not(.is-dragging) {
-      animation: none;
-      transform: scale(0.98);
+    // Drop-target highlight — подкрашиваем виджет на который сейчас уроним
+    &.is-drop-target {
+      box-shadow: 0 0 0 2px var(--ds-blue, #0A84FF) inset,
+                  0 8px 24px rgba(10,132,255,0.18);
     }
   }
 
-  // Внутренние партиалы (section/card) не должны перехватывать клики на overlay
-  .dashboard-widget > section,
-  .dashboard-widget > .card-apple {
-    pointer-events: none;
+  .dashboard-widget a,
+  .dashboard-widget [role="button"] {
+    cursor: grab;
   }
-  // Но свои клики разрешим на overlay'е
-  .dashboard-widget__edit-overlay { pointer-events: auto; }
 
   .dashboard-widget__edit-overlay {
     display: flex;
@@ -6152,7 +6146,6 @@ body.modal-open {
     position: absolute;
     top: 8px; left: 8px; right: 8px;
     z-index: 4;
-    animation: dashboard-overlay-fade var(--ds-dur-base) var(--ds-ease-standard);
   }
 }
 
@@ -6232,6 +6225,12 @@ body.modal-open {
 @keyframes dashboard-wiggle {
   0%, 100% { transform: rotate(-0.4deg) translateY(0);   }
   50%      { transform: rotate( 0.4deg) translateY(-1px); }
+}
+
+// Drag-friendly пульс: без rotate (чтобы не сбивать hit-testing dragover).
+@keyframes dashboard-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px var(--ds-blue-tint, rgba(10,132,255,0.18)) inset; }
+  50%      { box-shadow: 0 0 0 2px var(--ds-blue,     #0A84FF)              inset; }
 }
 
 @keyframes dashboard-overlay-fade {
