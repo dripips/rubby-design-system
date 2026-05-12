@@ -6372,6 +6372,8 @@ body.modal-open {
   max-width: 85%;
   font-size: 14px;
   line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: break-word;
   &--user {
     align-self: flex-end;
     background: var(--ds-blue);
@@ -6384,4 +6386,107 @@ body.modal-open {
     color: var(--ds-label-primary);
     border-bottom-left-radius: 4px;
   }
+}
+
+// =============================================================================
+//  Mobile responsiveness pass (v1.5)
+//  Один блок overrides внизу — точечные правки для узких экранов без
+//  пересборки всей системы. Брейк-поинты: 991 (tablet) / 767 (phone-l) /
+//  575 (phone-s).
+// =============================================================================
+
+// Любая <table class="table-apple"> на мобильных получает горизонтальный
+// scroll через display:block. Header/body остаются <table> ради сохранения
+// колоночного выравнивания.
+@media (max-width: 767.98px) {
+  .table-apple {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+
+    thead, tbody, tfoot { display: table; width: 100%; table-layout: auto; }
+    tr { display: table-row; }
+    th, td {
+      padding: 10px 12px;
+      font-size: 13px;
+    }
+  }
+
+  // Card-apple — уменьшаем внутренние отступы
+  .card-apple { padding: var(--ds-space-4); }
+
+  // Kanban — карточки чуть уже, чтоб помещались 1.2 в viewport
+  .kanban__col      { flex: 0 0 86vw; max-width: 320px; }
+  .kanban__card     { padding: 8px 10px; }
+
+  // Stat-card / KPI tile — поменьше шрифт
+  .stat-card__value { font-size: 22px; }
+  .stat-card__label { font-size: 11px; }
+
+  // Tabulator — компактнее на мобилке
+  .tabulator {
+    font-size: 12px;
+    .tabulator-cell, .tabulator-col { padding: 6px 8px !important; }
+  }
+
+  // Page-header actions — full-width buttons (уже есть, но усиливаем)
+  .page-header {
+    margin-bottom: var(--ds-space-4);
+    &__title { font-size: 24px; }
+    &__subtitle { font-size: 14px; }
+    &__actions {
+      width: 100%;
+      .btn { flex: 1 1 auto; min-width: 0; }
+    }
+  }
+
+  // Filter-chips календаря — full-width на мобилке (chip-bar wrap)
+  .filter-chip { width: 100%; }
+  .calendar-filters__chips { flex-direction: column; align-items: stretch; }
+  .calendar-filters__reset { margin-left: 0; }
+
+  // Recruitment / settings tabs — горизонтальный скролл при переполнении
+  .section-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+    &__item { flex: 0 0 auto; white-space: nowrap; }
+  }
+
+  // Dashboard edit-bar — на мобиле hint скрываем, оставляем только Save/Cancel
+  .dashboard-edit-bar__hint { display: none; }
+
+  // Audit page / любые длинные tables-row в .card-apple — даём горизонтальный
+  // bleed чтобы строки не ужимались до нечитаемых
+  .card-apple > .table-apple { margin: 0 calc(-1 * var(--ds-space-4)); width: calc(100% + 2 * var(--ds-space-4)); }
+}
+
+// Совсем узкие телефоны
+@media (max-width: 575.98px) {
+  // Топбар — поиск уже скрыт через d-md-block; убираем title если не помещается
+  .topbar-apple__title { font-size: 14px; }
+
+  // Card-apple ещё компактнее
+  .card-apple { padding: var(--ds-space-3); }
+
+  // Auth-shell — full-width форма, hero скрыт
+  .auth-shell__hero { display: none; }
+  .auth-shell { grid-template-columns: 1fr; }
+
+  // Avatar-apple на маленьком экране — крупнее не нужны
+  .avatar-apple--xl { width: 56px; height: 56px; font-size: 20px; }
+
+  // Кnopki в .d-flex.gap-2 — wrap чтобы не выходить за экран
+  .page-header__actions .btn { font-size: 13px; padding: 8px 12px; }
+
+  // Recent activity rows — компактный
+  .list-apple__item { padding: 10px 12px; gap: 8px; }
+}
+
+// Touch-устройства: убираем hover-эффекты которые "залипают" после tap
+@media (hover: none) {
+  .card-apple--hover:hover { transform: none; box-shadow: var(--ds-shadow-sm); }
+  .kanban__card:hover      { transform: none; box-shadow: var(--ds-shadow-xs); }
+  .sidebar-apple__item:hover { background: transparent; }
 }
