@@ -2,6 +2,41 @@
 //  Apple Components — кастомные UI-блоки в стиле macOS Sequoia / iOS 17
 // =============================================================================
 
+// ── Accessibility: skip-to-main link + усиленный focus-ring ──────────────
+// Skip-link виден только при keyboard-фокусе (Tab от начала страницы).
+// Даёт screen-reader / keyboard юзеру миновать sidebar+topbar за 1 Tab.
+.skip-to-main {
+  position: absolute;
+  top: -40px; left: var(--ds-space-3, 12px);
+  z-index: 9999;
+  padding: 10px 18px;
+  background: var(--ds-blue);
+  color: #fff;
+  border-radius: var(--ds-radius-pill, 999px);
+  font-size: 14px; font-weight: 600;
+  text-decoration: none;
+  transition: top 160ms var(--ds-ease-standard, ease);
+
+  &:focus, &:focus-visible {
+    top: var(--ds-space-3, 12px);
+    outline: 3px solid var(--ds-blue-tint, rgba(10,132,255,0.4));
+    outline-offset: 2px;
+  }
+}
+
+// Усиленные focus-rings для всех интерактивных элементов — Apple HIG не имеет
+// явного focus-ring, но WCAG 2.1 требует визуальный indicator для keyboard nav.
+:focus-visible {
+  outline: 3px solid var(--ds-blue, #0A84FF);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+// Не трогаем focus у кнопок которые сами рисуют focus (Bootstrap form-control)
+.form-control:focus-visible,
+.form-select:focus-visible {
+  outline: none;
+}
+
 // ── Base layout shell ───────────────────────────────────────────────────────
 .app-shell {
   display: grid;
@@ -6358,6 +6393,65 @@ body.modal-open {
   }
 
   &__label { letter-spacing: 0.04em; }
+}
+
+// ── In-app chat (HR ↔ employee) ──────────────────────────────────────────
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 220px);
+  min-height: 480px;
+
+  &__messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--ds-space-4);
+    gap: var(--ds-space-2);
+    background: var(--ds-bg-base);
+  }
+}
+
+.chat-composer {
+  display: flex;
+  gap: var(--ds-space-2);
+  padding: var(--ds-space-3);
+  border-top: 1px solid var(--ds-separator);
+  background: var(--ds-bg-elevated);
+
+  textarea {
+    flex: 1;
+    resize: vertical;
+    min-height: 44px;
+    max-height: 200px;
+    font-size: 14px;
+  }
+  &__send {
+    align-self: stretch;
+    flex: 0 0 auto;
+  }
+}
+
+.conversation-row {
+  cursor: pointer;
+  transition: background var(--ds-dur-fast) var(--ds-ease-standard);
+  &:hover { background: var(--ds-fill-4); }
+}
+
+.recipients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--ds-space-2);
+  max-height: 360px;
+  overflow-y: auto;
+  padding: var(--ds-space-2);
+  background: var(--ds-fill-4);
+  border-radius: var(--ds-radius-md);
+}
+
+// Бубль для сообщений другого автора получает author-label сверху —
+// добавим место для него.
+.bootstrap-chat__bubble[data-author] {
+  position: relative;
 }
 
 // ── Bootstrap-чат: пузырьки HR/AI ─────────────────────────────────────────
